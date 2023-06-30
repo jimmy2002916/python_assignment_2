@@ -222,7 +222,3 @@ Your solution will be evaluated based on the following criteria:
 - Design: Does the program make good use of functions, data structures, algorithms, databases, and libraries?
 - Error handling: Does the program handle errors and unexpected input appropriately?
 - Documentation: Is the code adequately documented, with clear explanations of the algorithms and data structures used?
-
-## Additional Notes:
-
-You have 7 days to complete this assignment and submit your solution.
