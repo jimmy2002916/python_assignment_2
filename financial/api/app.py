@@ -110,5 +110,57 @@ def financial_data():
     return jsonify(result)
 
 
+@app.route('/statistics', methods=['GET'])
+def get_statistics():
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+    symbols = request.args.get('symbols').split(',')  # Assuming symbols are comma-separated
+
+    # Validate required parameters
+    if not start_date or not end_date or not symbols:
+        return jsonify({"data": {}, "info": {"error": "start_date, end_date, and symbols are required"}}), 400
+
+    try:
+        # Convert and validate date format
+        datetime.strptime(start_date, "%Y-%m-%d")
+        datetime.strptime(end_date, "%Y-%m-%d")
+    except ValueError:
+        return jsonify({"data": {}, "info": {"error": "Invalid date format. Use YYYY-MM-DD."}}), 400
+
+    db_path = get_db_path()  # Function to get the database path
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cur = conn.cursor()
+
+    # Prepare response data
+    response_data = {
+        "start_date": start_date,
+        "end_date": end_date,
+        "symbols": symbols,
+        "average_daily_open_price": {},
+        "average_daily_close_price": {},
+        "average_daily_volume": {}
+    }
+
+    for symbol in symbols:
+        cur.execute('''
+            SELECT
+                AVG(CAST(open_price AS REAL)) AS avg_open_price,
+                AVG(CAST(close_price AS REAL)) AS avg_close_price,
+                AVG(CAST(volume AS REAL)) AS avg_volume
+            FROM financial_data
+            WHERE symbol = ? AND date BETWEEN ? AND ?
+        ''', (symbol, start_date, end_date))
+
+        row = cur.fetchone()
+        response_data["average_daily_open_price"][symbol] = row["avg_open_price"] if row["avg_open_price"] is not None else 0
+        response_data["average_daily_close_price"][symbol] = row["avg_close_price"] if row["avg_close_price"] is not None else 0
+        response_data["average_daily_volume"][symbol] = row["avg_volume"] if row["avg_volume"] is not None else 0
+
+    conn.close()
+
+    return jsonify({"data": response_data, "info": {"error": ""}})
+
+
 if __name__ == '__main__':
     app.run(debug=True)
