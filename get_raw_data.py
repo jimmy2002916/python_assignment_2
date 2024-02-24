@@ -2,8 +2,6 @@ from datetime import datetime, timedelta
 import requests
 import os
 import sqlite3
-import json
-
 
 def execute_sql_from_file(filename, connection):
     # Open and read the file as a single buffer
@@ -20,7 +18,7 @@ def get_stock_data(symbols):
     end_date = datetime.today()
     start_date = end_date - timedelta(weeks=2)
 
-    data_dir = 'financial/data'
+    data_dir = 'financial/api/data'
     if not os.path.exists(data_dir):
         os.makedirs(data_dir)
     conn = sqlite3.connect(f'{data_dir}/financial_data.db')
