@@ -2,6 +2,8 @@ from datetime import datetime, timedelta
 import requests
 import os
 import sqlite3
+import time
+
 
 def execute_sql_from_file(filename, connection):
     # Open and read the file as a single buffer
@@ -75,5 +77,5 @@ def get_stock_data(symbols):
     conn.close()
 
 
-symbols = ['IBM', 'AAPL']
+symbols = ['AAPL', 'IBM']
 get_stock_data(symbols)

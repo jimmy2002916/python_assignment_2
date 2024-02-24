@@ -6,6 +6,19 @@ import sqlite3
 app = Flask(__name__)
 
 
+def get_db_path():
+    # Get the absolute path of the current file (app.py)
+    current_file_path = os.path.abspath(__file__)
+    # Get the directory of the current file path (api directory)
+    api_dir = os.path.dirname(current_file_path)
+    # Construct the path to the data directory within the financial directory
+    data_dir = os.path.join(api_dir, 'data')
+    # Construct the path to the database file within the data directory
+    db_path = os.path.join(data_dir, 'financial_data.db')
+    return db_path
+
+
+
 def execute_sql_from_file(filename, connection):
     # The schema.sql file is located at the root of the project directory
     project_root = os.path.dirname(os.path.dirname(app.root_path))
@@ -17,10 +30,9 @@ def execute_sql_from_file(filename, connection):
 
 
 def init_db():
-    # The database is in the data directory, two levels above the current file
-    db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'financial_data.db')
-    conn = sqlite3.connect("/Users/jimmyhomefolder/PycharmProjects/python_assignment_2/financial/api/data/financial_data.db")
-
+    # Use the get_db_path function to connect to the SQLite database
+    db_path = get_db_path()
+    conn = sqlite3.connect(db_path)
     # Execute the schema.sql file to create the tables
     execute_sql_from_file('schema.sql', conn)
 
@@ -50,7 +62,7 @@ def query_financial_data(start_date, end_date, symbol, limit, page):
     where_statement = " AND ".join(where_clauses) if where_clauses else "1=1"
 
     # Connect to the SQLite database
-    db_path = "/Users/jimmyhomefolder/PycharmProjects/python_assignment_2/financial/api/data/financial_data.db"
+    db_path = get_db_path()
 
     # Connect to the SQLite database using the absolute path
     conn = sqlite3.connect(db_path)
