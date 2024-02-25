@@ -1,224 +1,81 @@
-# Take-Home Assignment
-
-The goal of this take-home assignment is to evaluate your abilities to use API, data processing and transformation, SQL, and implement a new API service in Python.
-
-You should first fork this repository, and then send us the code or the url of your forked repository via email.
-
-**Please do not submit any pull requests to this repository.**
-
-You need to perform the following **Two** tasks:
-
-## Task1
-### Problem Statement:
-1. Retrieve the financial data of Two given stocks (IBM, Apple Inc.)for the most recently two weeks. Please using an free API provider named [AlphaVantage](https://www.alphavantage.co/documentation/) 
-2. Process the raw API data response, a sample output after process should be like:
-```
-{
-    "symbol": "IBM",
-    "date": "2023-02-14",
-    "open_price": "153.08",
-    "close_price": "154.52",
-    "volume": "62199013",
-},
-{
-    "symbol": "IBM",
-    "date": "2023-02-13",
-    "open_price": "153.08",
-    "close_price": "154.52",
-    "volume": "59099013"
-},
-{
-    "symbol": "IBM",
-    "date": "2023-02-12",
-    "open_price": "153.08",
-    "close_price": "154.52",
-    "volume": "42399013"
-},
-...
-``` 
-3. Insert the records above into a table named `financial_data` in your local database, column name should be same as the processed data from step 2 above (symbol, date, open_price, close_price, volume) 
-
-
-## Task2
-### Problem Statement:
-1. Implement an Get financial_data API to retrieve records from `financial_data` table, please note that:
-    - the endpoint should accept following parameters: start_date, end_date, symbol, all parameters are optional
-    - the endpoint should support pagination with parameter: limit and page, if no parameters are given, default limit for one page is 5
-    - the endpoint should return an result with three properties:
-        - data: an array includes actual results
-        - pagination: handle pagination with four properties
-            
-            - count: count of all records without panigation
-            - page: current page index
-            - limit: limit of records can be retrieved for single page
-            - pages: total number of pages
-        - info: includes any error info if applies
+# Financial Data Analysis API
+## Table of Contents
+- [Project Description](#project-description)
+- [Tech Stack](#tech-stack)
+- [Running the Code Locally](#running-the-code-locally)
+  - [Prerequisites](#prerequisites)
+  - [Steps to Run](#steps-to-run)
+- [API Endpoints](#api-endpoints)
+  - [`/financial_data`](#financial_data)
+  - [`/statistics`](#statistics)
+- [Testing](#testing)
+  - [Unit Tests](#unit-tests)
+- [Future work](#future-work)
     
+## Project Description
+This python-based project fetches and analyzes financial stock data from AlphaVantage over specified periods. It allows users to retrieve average daily open prices, closing prices, and volumes for selected stocks.
 
-Sample Request:
-```bash
-curl -X GET 'http://localhost:5000/api/financial_data?start_date=2023-01-01&end_date=2023-01-14&symbol=IBM&limit=3&page=2'
+## Tech Stack
+- **Programming Language**: Python 3
+- **Web Framework**: Flask
+- **Database**: SQLite
+- **External API**: AlphaVantage
 
-```
-Sample Response:
-```
-{
-    "data": [
-        {
-            "symbol": "IBM",
-            "date": "2023-01-05",
-            "open_price": "153.08",
-            "close_price": "154.52",
-            "volume": "62199013",
-        },
-        {
-            "symbol": "IBM",
-            "date": "2023-01-06",
-            "open_price": "153.08",
-            "close_price": "154.52",
-            "volume": "59099013"
-        },
-        {
-            "symbol": "IBM",
-            "date": "2023-01-09",
-            "open_price": "153.08",
-            "close_price": "154.52",
-            "volume": "42399013"
-        }
-    ],
-    "pagination": {
-        "count": 20,
-        "page": 2,
-        "limit": 3,
-        "pages": 7
-    },
-    "info": {'error': ''}
-}
+## Running the Code Locally
 
-```
+### Prerequisites
+- Python 3.12.2_1
+- Flask (`pip install flask`)
+- Requests (`pip install requests`)
 
-2. Implement an Get statistics API to perform the following calculations on the data in given period of time:
-    - Calculate the average daily open price for the period
-    - Calculate the average daily closing price for the period
-    - Calculate the average daily volume for the period
+### Steps to Run
+1. Clone the repository to your local machine.
+2. Navigate to the project directory using Pycharm IDE.
+3. Set the AlphaVantage API key as an environment variable:
+   1. Open PyCharm and navigate to the project where you need the environment variable.
+   2. Go to "Run" -> "Edit Configurations".
+   3. Find the script or configuration you're running.
+   4. In the "Environment variables" field, click the browse button (three dots).
+   5. Click the "+" icon to add a new environment variable.
+   6. Enter **`ALPHAVANTAGE_API_KEY`** as the name and your actual API key as the value.
+   7. Apply the changes and close the dialog.
+4. Run `python get_raw_data.py` to get the financial data from AlphaVantage, and insert the data to local SQLite db.
+5. Spin up the API by runnig `app.py`, and you can use curl command in the below `API Endpoints` section to retrieve data.
+  
+## API Endpoints
 
-    - the endpoint should accept following parameters: start_date, end_date, symbols, all parameters are required
-    - the endpoint should return an result with two properties:
-        - data: calculated statistic results
-        - info: includes any error info if applies
+### `/financial_data`
+- **Method**: GET
+- **Description**: Fetches historical financial data including open, close prices, and volume for specified stock symbols over a given date range.
+- **Parameters**:
+  - start_date (required): The starting date for fetching the financial data (format: YYYY-MM-DD).
+  - end_date (required): The ending date for fetching the financial data (format: YYYY-MM-DD).
+  - symbols (required): A comma-separated list of stock symbols for which financial data is to be fetched (e.g., AAPL,IBM).
+- **Example Request**:
+  ```sh
+  curl -G "http://127.0.0.1:5000/financial_data" \
+    --data-urlencode "start_date=2023-01-01" \
+    --data-urlencode "end_date=2023-01-31" \
+    --data-urlencode "symbols=IBM,AAPL"
 
-Sample request:
-```bash
-curl -X GET http://localhost:5000/api/statistics?start_date=2023-01-01&end_date=2023-01-31&symbol=IBM
+### `/statistics`
+- **Method**: GET
+- **Description**: Calculates and returns the average daily open price, closing price, and volume for the specified stock symbols within a given date range.
+- **Parameters**:
+  - `start_date` (required): Start date of the period (format: YYYY-MM-DD).
+  - `end_date` (required): End date of the period (format: YYYY-MM-DD).
+  - `symbols` (required): Comma-separated list of stock symbols (e.g., AAPL,IBM).
+- **Example Request**:
+  ```sh
+  curl -G "http://127.0.0.1:5000/statistics" \
+  --data-urlencode "start_date=2023-01-01" \
+  --data-urlencode "end_date=2023-01-31" \
+  --data-urlencode "symbols=IBM,AAPL"
 
-```
-Sample response:
-```
-{
-    "data": {
-        "start_date": "2023-01-01",
-        "end_date": "2023-01-31",
-        "symbol": "IBM",
-        "average_daily_open_price": 123.45,
-        "average_daily_close_price": 234.56,
-        "average_daily_volume": 1000000
-    },
-    "info": {'error': ''}
-}
+## Testing
+### Unit Tests
+- To ensure API functionality, including optional and required parameters handling, unit tests are implemented. Run them using:
+  ```sh
+  python3 -m unittest
 
-```
-
-## What you should deliver:
-Directory structure:
-```
-project-name/
-├── model.py
-├── schema.sql
-├── get_raw_data.py
-├── Dockerfile
-├── docker-compose.yml
-├── README.md
-├── requirements.txt
-└── financial/<Include API service code here>
-
-```
-
-1. A `get_raw_data.py` file in root folder
-
-    Action: 
-    
-    Run 
-    ```bash
-    python get_raw_data.py
-    ```
-
-    Expectation: 
-    
-    1. Financial data will be retrieved from API and processed,then insert all processed records into table `financial_data` in local db
-    2. Duplicated records should be avoided when executing get_raw_data multiple times, consider implementing your own logic to perform upsert operation if the database you select does not have native support for such operation.
-
-2. A `schema.sql` file in root folder
-    
-    Define schema for financial_data table, if you prefer to use an ORM library, just **ignore** this deliver item and jump to item3 below.
-
-    Action: Run schema definition in local db
-
-    Expectation: A new table named `financial_data` should be created if not exists in db
-
-3. (Optional) A `model.py` file: 
-    
-    If you perfer to use a ORM library instead of DDL, please include your model definition in `model.py`, and describe how to perform migration in README.md file
-
-4. A `Dockerfile` file in root folder
-
-    Build up your local API service
-
-5. A `docker-compose.yml` file in root folder
-
-    Two services should be defined in docker-compose.yml: Database and your API
-
-    Action:
-
-    ```bash
-    docker-compose up
-    ```
-
-    Expectation:
-    Both database and your API service is up and running in local development environment
-
-6. A `financial` sub-folder:
-
-    Put all API implementation related codes in here
-
-7. `README.md`: 
-
-    You should include:
-    - A brief project description
-    - Tech stack you are using in this project
-    - How to run your code in local environment
-    - Provide a description of how to maintain the API key to retrieve financial data from AlphaVantage in both local development and production environment.
-
-8. A `requirements.txt` file:
-
-    It should contain your dependency libraries.
-
-## Requirements:
-
-- The program should be written in Python 3.
-- You are free to use any API and libraries you like, but should include a brief explanation of why you chose the API and libraries you used in README.
-- The API key to retrieve financial data should be stored securely. Please provide a description of how to maintain the API key from both local development and production environment in README.
-- The database in Problem Statement 1 could be created using SQLite/MySQL/.. with your own choice.
-- The program should include error handling to handle cases where the API returns an error or the data is not in the correct format.
-- The program should cover as many edge cases as possible, not limited to expectations from deliverable above.
-- The program should use appropriate data structures and algorithms to store the data and perform the calculations.
-- The program should include appropriate documentation, including docstrings and inline comments to explain the code.
-
-## Evaluation Criteria:
-
-Your solution will be evaluated based on the following criteria:
-
-- Correctness: Does the program produce the correct results?
-- Code quality: Is the code well-structured, easy to read, and maintainable?
-- Design: Does the program make good use of functions, data structures, algorithms, databases, and libraries?
-- Error handling: Does the program handle errors and unexpected input appropriately?
-- Documentation: Is the code adequately documented, with clear explanations of the algorithms and data structures used?
+## Future work
