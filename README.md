@@ -79,11 +79,13 @@ This python-based project fetches and analyzes financial stock data from AlphaVa
   python3 -m unittest
 
 ## Future work
-1. Docker Implementation
-2. In the production environment we will need to store API Keys more securely. Below are some best practices for securely storing API keys:
+1. In the production environment we will need to store API Keys more securely. Below are some best practices for securely storing API keys:
    - **Cloud Provider Key Management Services (KMS):** Services like AWS KMS, Azure Key Vault, and Google Cloud KMS allow creation and management of cryptographic keys for application security.
    - **Secret Management Services:** AWS Secrets Manager, for instance, enables rotation, management, and retrieval of secrets, with applications advised to dynamically fetch these at runtime.
    - **CI/CD Pipeline:** Securely store API keys as variables in Git repositories with restricted access, and inject these secrets into applications (e.g., `get_raw_data.py`) via CI/CD pipelines like GitLab.
+2. Implement robust error handling and data validation to ensure data integrity and data quality.
+3. Use caching and request batching to optimize API calls and reduce load on the database.
+
 
 
 
