@@ -74,8 +74,10 @@ This python-based project fetches and analyzes financial stock data from AlphaVa
 
 ## Testing
 ### Unit Tests
-- To ensure API functionality, including optional and required parameters handling, unit tests are implemented. Run them using:
+- To ensure API functionality, including optional and required parameters handling, unit tests are implemented. You can find the unit tests in the `test_financial_data_api.py`. Run them using:
   ```sh
   python3 -m unittest
 
 ## Future work
+1. Docker implementation
+2. To Store API keys more securely
