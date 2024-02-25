@@ -13,7 +13,9 @@
 - [Future work](#future-work)
     
 ## Project Description
-This python-based project fetches and analyzes financial stock data from AlphaVantage over specified periods. It allows users to retrieve average daily open prices, closing prices, and volumes for selected stocks.
+This Python-based project, covered by comprehensive unit test cases, fetches and analyzes financial stock data from AlphaVantage over specified periods. It enables users to retrieve average daily open prices, closing prices, and volumes for selected stocks.
+
+Some future work is listed at the end of the README section, which can be undertaken to improve scalability, robustness, and quality.
 
 ## Tech Stack
 - **Programming Language**: Python 3
