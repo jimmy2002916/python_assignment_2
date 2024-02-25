@@ -79,12 +79,15 @@ Some future work is listed at the end of the README section, which can be undert
   python3 -m unittest
 
 ## Future work
-1. In the production environment we will need to store API Keys more securely. Below are some best practices for securely storing API keys:
-   - **Cloud Provider Key Management Services (KMS):** Services like AWS KMS, Azure Key Vault, and Google Cloud KMS allow creation and management of cryptographic keys for application security.
-   - **Secret Management Services:** AWS Secrets Manager, for instance, enables rotation, management, and retrieval of secrets, with applications advised to dynamically fetch these at runtime.
-   - **CI/CD Pipeline:** Securely store API keys as variables in Git repositories with restricted access, and inject these secrets into applications (e.g., `get_raw_data.py`) via CI/CD pipelines like GitLab.
-2. Implement robust error handling and data validation to ensure data integrity and data quality.
-3. Use caching and request batching to optimize API calls and reduce load on the database.
+1. In the development and production environment we will need to store API Keys more securely. Below are some best practices for securely storing API keys:
+   - Local Environment:
+     - Set the AlphaVantage API key as an environment variable
+   - Production Environment:
+     - **Cloud Provider Key Management Services (KMS):** Services like AWS KMS, Azure Key Vault, and Google Cloud KMS allow creation and management of cryptographic keys for application security.
+     - **Secret Management Services:** AWS Secrets Manager, for instance, enables rotation, management, and retrieval of secrets, with applications advised to dynamically fetch these at runtime.
+     - **CI/CD Pipeline:** Securely store API keys as variables in Git repositories with restricted access, and inject these secrets into applications (e.g., `get_raw_data.py`) via CI/CD pipelines like GitLab.
+3. Implement robust error handling and data validation to ensure data integrity and data quality.
+4. Use caching and request batching to optimize API calls and reduce load on the database.
 
 
 
