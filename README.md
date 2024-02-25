@@ -25,8 +25,6 @@ This python-based project fetches and analyzes financial stock data from AlphaVa
 
 ### Prerequisites
 - Python 3.12.2_1
-- Flask (`pip install flask`)
-- Requests (`pip install requests`)
 
 ### Steps to Run
 1. Clone the repository to your local machine.
